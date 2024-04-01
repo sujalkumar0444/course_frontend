@@ -10,7 +10,7 @@ export default function CourseContentPage() {
   const dispatch = useDispatch()
   
   const course_data = useLoaderData();
-  console.log(course_data);
+  console.log("hehe",course_data);
   dispatch(setCourseData(course_data));
   return (
     <Sidebar/>
@@ -20,7 +20,7 @@ export default function CourseContentPage() {
 
 export const coursecontentloader = async ({params}) => {
   let {courseId}=params;
-  let modulesdata=await axios.get(`http://localhost:3000/api/courses/${courseId}`);
+  let modulesdata=await axios.get(`http://localhost:8800/fetch/courses/${courseId}`);
   
   return modulesdata.data;
 };

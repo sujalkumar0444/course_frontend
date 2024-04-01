@@ -2,25 +2,43 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch,useSelector} from "react-redux";
 import { useState } from "react";
+import HTMLReactParser from "html-react-parser";
 import CourseContentForm from "./CourseContentForm";
 import ProblemContentPage from "./problemContentPage";
+import AssessmentContentForm from "./AssessmentContentForm"
 
 
 function Modules() {
   let [isdropdown,setIsdropdown] = useState(false);
   let [islessoncontent,setislessoncontnent ] = useState(false);
   let [isProblemContent,setisProblemContent] = useState(false);
+  const [showFullContent, setShowFullContent] = useState({});
   let [isAssissmentContent,setisAssissmentContent] = useState(false);
   function handleDropdown(){
     setIsdropdown(!isdropdown);
   }
   let modulename = useParams().coursename;
+let courseId = useParams().courseId;
+console.log(useParams());
   // modulename = modulename.replace(/ /g, "_");
   let {modules:modulesdata} = useSelector((state) => state.coursecontent.courseContent);
-  modulesdata = modulesdata.filter((ele)=>ele.module_title === modulename);
+  const {courseid } =  useSelector((state) => state.coursecontent.courseContent);
+  modulesdata = modulesdata.filter((ele)=>ele._id === modulename && courseid===courseId);
+  const moduleId = modulesdata[0]._id;
   modulesdata=modulesdata[0].lessons;
+ 
   console.log("----modulesdata",modulesdata); 
   // /console.log("modulename "+modulename);
+
+
+  function toggleShowFullContent(lessonId) {
+    setShowFullContent((prev) => ({
+      ...prev,
+      [lessonId]: !prev[lessonId],
+    }));
+  }
+
+
   return (
   <>
 
@@ -32,7 +50,7 @@ function Modules() {
               <div key={ele._id} className="hover:scale-105 hover:elevation-0 transition-transform
               flex flex-col mt-6 text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-88 m-2">
           <div className="p-6">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -44,18 +62,97 @@ function Modules() {
                 clipRule="evenodd"
               ></path>
               <path d="M5.26 17.242a.75.75 0 10-.897-1.203 5.243 5.243 0 00-2.05 5.022.75.75 0 00.625.627 5.243 5.243 0 005.022-2.051.75.75 0 10-1.202-.897 3.744 3.744 0 01-3.008 1.51c0-1.23.592-2.323 1.51-3.008z"></path>
-            </svg>
-            <h5 className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-               {ele.lesson_title}  
-            </h5>
-          </div>
+            </svg> */}
+           
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson number :{ele.lesson_no}  
+            </p>
+           
+            {/* <div className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               {ele.text_content}  
+            </div> */}
+                {showFullContent[ele._id] && (
+                  <div className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+                    {ele.contentype === "text-material" && (
+
+                      <>
+             
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson title :{ele.lesson_title}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson type :{ele.contentype}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson points :{ele.lesson_points}  
+            </p>
+            {/* <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               text content :{  ele.text_content}  
+            </p> */}
+            <div>text content :{HTMLReactParser(ele.text_content )}</div>
+          
+                      </>
+                     )}
+                    {ele.contentype === "problem" && (<>
+                      {/* <ProblemContentPage problemId={ele.problem_id} /> */}
+                      <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson title :{ele.lesson_title}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson type :{ele.contentype}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson points :{ele.lesson_points}  
+            </p>
+            {/* <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               text content :{  ele.text_content}  
+            </p> */}
+                      <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               problem title :{ele.problem_id.problem_title}  
+            </p>
+         
+
+            <div>problem description :{HTMLReactParser(ele.problem_id.problem_description )}</div>
+                      </>
+                   
+                
+  
+                    )}
+                    {ele.contentype === "assessment" && (
+                      <>
+                      {/* <AssessmentContentForm assessmentId={ele.assessment_ref} /> */}
+                      <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson title :{ele.lesson_title}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson type :{ele.contentype}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               lesson points :{ele.lesson_points}  
+            </p>
+            {/* <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               text content :{  ele.text_content}  
+            </p> */}
+                      <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               Assessment name :{ele.assessment_ref.assignment_name}  
+            </p>
+            <p className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+               Assessment time :{ele.assessment_ref.total_time}  
+            </p>
+
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
           <div className="p-6 pt-0">
-            <a href="#" className="inline-block">
-              <button
-                className="flex items-center gap-2 px-4 py-2 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none hover:bg-gray-900/10 active:bg-gray-900/20"
-                type="button"
-              >
-                Learn More
+                <button
+                  onClick={() => toggleShowFullContent(ele._id)}
+                  className="flex items-center gap-2 px-4 py-2 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none hover:bg-gray-900/10 active:bg-gray-900/20"
+                  type="button"
+                >
+                  {showFullContent[ele._id] ? "Show Less" : "Show More"}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -91,7 +188,7 @@ function Modules() {
                   ></path>
                 </svg>
               </button>
-            </a>
+        
           </div>
             </div>
             )
@@ -165,9 +262,9 @@ function Modules() {
     
     {
       (islessoncontent)?<>
-      <section class={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${islessoncontent ? 'absolute' : 'hidden'}`}>
+      <section className={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${islessoncontent ? 'absolute' : 'hidden'}`}>
         <button onClick={()=>{setislessoncontnent(false);}}>close</button>
-        <CourseContentForm></CourseContentForm>
+        <CourseContentForm moduleId={moduleId}></CourseContentForm>
         </section>
       </>
       :null
@@ -175,9 +272,9 @@ function Modules() {
 
   {
       (isProblemContent)?<>
-      <section class={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${isProblemContent ? 'absolute' : 'hidden'}`}>
+      <section className={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${isProblemContent ? 'absolute' : 'hidden'}`}>
         <button onClick={()=>{setisProblemContent(false);}}>close</button>
-        <ProblemContentPage></ProblemContentPage>
+        <ProblemContentPage moduleId={moduleId}></ProblemContentPage>
         </section>
       </>
       :null
@@ -185,9 +282,9 @@ function Modules() {
 
   {
       (isAssissmentContent)?<>
-      <section class={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${isAssissmentContent ? 'absolute' : 'hidden'}`}>
+      <section className={"rounded-3xl shadow-2xl transition-all duration-300 ease-in-out"+`absolute   top-24  ${isAssissmentContent ? 'absolute' : 'hidden'}`}>
         <button onClick={()=>{setisAssissmentContent(false);}}>close</button>
-        <ProblemContentPage></ProblemContentPage>
+        <AssessmentContentForm moduleId={moduleId}></AssessmentContentForm>
         </section>
       </>
       :null

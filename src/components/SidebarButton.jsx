@@ -5,13 +5,15 @@ export default function SidebarButton(props) {
   const {moduledata} = props;
   // console.log("isActive:",isActive);
   // console.log("moduledata:",moduledata);
+ 
   const {
+    _id,
     module_title,
     module_total_score,
   }=moduledata;
   return (
     <NavLink
-     to={`${module_title}`}
+     to={`${_id}`}
     >
     <button className={"flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"} >
        
